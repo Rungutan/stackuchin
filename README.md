@@ -182,6 +182,40 @@ Here's a sample:
 ![Stackuchin Alerts](stackuchin-alert.png) 
 
 
+## Running it in a CI/CD process
+
+Here's a sample pipeline that uses our official Docker image to run it in using GitLab CI/CD:
+
+```shell script
+image: rungutancommunity/stackuchin:latest
+
+stages:
+  - deploy_updates
+
+variables:
+  AWS_DEFAULT_REGION: us-east-1
+  STACKUCHIN_SLACK: https://hooks.slack.com/services/some_slack_webhook
+  STACKUCHIN_BUCKET_NAME: some-deployment-bucket-in-us-east-1
+  STACKUCHIN_BUCKET_PREFIX: some/prefix/this/is/optional
+
+deploy_updates:
+  only:
+    refs:
+      - master
+  stage: deploy_updates
+  script:
+    - |
+        cat > pipeline.yaml <<EOF
+        pipeline:
+          pipeline_type: parallel
+          update:
+            - stack_name: My-First-Stack
+            - stack_name: My-Second-Stack
+        EOF
+    - stackuchin --stack_file stack_file.yaml --pipeline_file pipeline.yaml
+```
+
+
 ## Notes
 
 * If you don't specify a value for a specific stack parameter, then the script will automatically:
