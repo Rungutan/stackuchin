@@ -162,3 +162,11 @@ You can specify only 1, 2 or 3 types of operations mentioned above, but regardle
 3) DELETE 
 
 * The pipeline, if "parallel", will execute ALL operations at the same time.
+
+* Due to AWS CloudFormation limitations, a template cannot be supplied as string to the API call if it goes over a certain value in bytes.
+
+https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html
+
+For that, you can use the arguments `--s3_bucket` / `--s3_prefix` (or their respective environment variable equivalents`STACKUCHIN_BUCKET_NAME` / `STACKUCHIN_BUCKET_PREFIX`) to specify an intermediate place where to upload the cloudformation template before using it in the API call.
+
+The command will work without supplying these values, but it is recommended that you use them so that you don't encounter any non-necessary errors.
