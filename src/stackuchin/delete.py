@@ -1,5 +1,4 @@
 import boto3
-import botocore
 import yaml
 from datetime import datetime
 

@@ -44,7 +44,7 @@ To see help text, you can run:
 
     # noinspection PyMethodMayBeStatic
     def version(self):
-        print("1.0.0")
+        print("1.1.0")
 
     # noinspection PyMethodMayBeStatic
     def create(self):

@@ -1,8 +1,6 @@
 import yaml
 import concurrent.futures
 
-from stackuchin.utilities import alert
-from stackuchin.utilities import result
 
 from stackuchin.create import create
 from stackuchin.delete import delete

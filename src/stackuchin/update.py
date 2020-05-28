@@ -1,5 +1,4 @@
 import boto3
-import botocore
 from botocore.exceptions import WaiterError
 import yaml
 from datetime import datetime

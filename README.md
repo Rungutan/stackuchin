@@ -13,11 +13,10 @@ This CLI has been designed for:
 3) send notifications to Slack channels with AWS errors based on operation
 4) support **create**, **update** and **delete** commands
 5) can be ran either manually or through a pipeline definition in your CI/CD system
-6) supports both AWS normal CloudFormation templates as well AWS SAM templates
-7) supports parent/child stacks
-8) it supports NoEcho parameters
-9) it supports tagging of resources at stack level
-10) it supports unattended deployment (through a CI/CD system)
+6) supports parent/child stacks
+7) it supports NoEcho parameters
+8) it supports tagging of resources at stack level
+9) it supports unattended deployment (through a CI/CD system)
 
 And this is just the tip of the iceberg...
 
