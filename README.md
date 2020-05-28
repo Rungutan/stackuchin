@@ -1,4 +1,4 @@
-![Stackuchin Logo](stackuchin-logo.png) 
+![Stackuchin Logo](https://raw.githubusercontent.com/Rungutan/stackuchin/master/stackuchin-logo.png) 
 
 ## What is Stackuchin?
 
@@ -178,7 +178,7 @@ You get notified **ALL** with **PROPER MESSAGES**, so that you wouldn't need to 
 
 Here's a sample:
 
-![Stackuchin Alerts](stackuchin-alert.png) 
+![Stackuchin Alerts](https://raw.githubusercontent.com/Rungutan/stackuchin/master/stackuchin-alert.png) 
 
 
 ## Running it in a CI/CD process
