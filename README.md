@@ -211,7 +211,7 @@ deploy_updates:
             - stack_name: My-First-Stack
             - stack_name: My-Second-Stack
         EOF
-    - stackuchin --stack_file stack_file.yaml --pipeline_file pipeline.yaml
+    - stackuchin pipeline --stack_file stack_file.yaml --pipeline_file pipeline.yaml
 ```
 
 
