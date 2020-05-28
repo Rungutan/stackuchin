@@ -1,4 +1,4 @@
-# stackuchin
+![Stackuchin Logo](stackuchin-logo.png) 
 
 ## What is Stackuchin?
 
@@ -121,7 +121,7 @@ The logic of the app is simple:
 2) Specify the file which contains the parameters for your stack
 3) (optional) Add any secrets (aka NoEcho parameters) that your stack might need
 
-Here's the most basic simple definitionn of a "stack file":
+Here's the most basic simple definition of a "stack file":
 ```shell script
 your-first-stack:
   Account: 123112321123
