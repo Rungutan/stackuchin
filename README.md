@@ -114,6 +114,41 @@ optional arguments:
 
 ```
 
+## How do you actually use it ?
+
+The logic of the app is simple:
+1) Specify the operation that you want to perform
+2) Specify the file which contains the parameters for your stack
+3) (optional) Add any secrets (aka NoEcho parameters) that your stack might need
+
+Here's the most basic simple definitionn of a "stack file":
+```shell script
+your-first-stack:
+  Account: 123112321123
+  Region: us-east-1
+  Template: cloudformation-template.yaml
+  # All parameters except NoEcho.
+  Parameters:
+    paramA: valA
+  Tags:
+    Environment: UTILITIES
+    Team: DevOps
+    MaintainerEmail: support@rungutan.com
+    MaintainerTeam: Rungutan
+
+another-stack-name:
+  Account: 123112321123
+  Region: us-east-1
+  Template: some-folder/cloudformation-some-other-template.yaml
+  # Stack without readable parameters.
+  Parameters: {}
+  Tags:
+    Environment: UTILITIES
+    Team: DevOps
+    MaintainerEmail: support@rungutan.com
+    MaintainerTeam: Rungutan
+```
+
 ## Running it as a pipeline
 
 ```shell script
@@ -148,6 +183,10 @@ Here's a sample:
 
 
 ## Notes
+
+* If you don't specify a value for a specific stack parameter, then the script will automatically:
+1) Set the value as "True" for "UsePreviousValue" (as per AWS documentation), which works just fine for UPDATE and DELETE commands, but of course won't work for CREATE commands
+2) If the parameter was not previously defined (aka you're running a CREATE command), it uses (as per AWS Documentation as well) the "Default" value of the parameter as defined in your stack's cloudformation template
 
 * Using secrets (NoEcho) parameters
 
