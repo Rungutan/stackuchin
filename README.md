@@ -113,3 +113,52 @@ optional arguments:
                         If no profiles are defined, then the default AWS credential mechanism starts.
 
 ```
+
+## Running it as a pipeline
+
+```shell script
+
+cat > input.yaml <<EOL
+
+pipeline:
+  update:
+    - stack_name: TestUpdateStack
+  delete:
+    - stack_name: TestDeleteStack
+  create:
+    - stack_name: TestCreateStack
+      secrets:
+        - Name: SomeSecretName
+          Value: SomeSecreValue
+EOL
+
+stackuchin  pipeline --pipeline_file input.yaml
+
+```
+
+## Get alerts in Slack
+
+Use the environment variable `STACKUCHIN_SLACK` or the argument `--slack_webhook` to specify a Slack incoming webhook to push your alerts.
+
+You get notified **ALL** with **PROPER MESSAGES**, so that you wouldn't need to have to open your AWS Console to fix your stuff.
+
+Here's a sample:
+
+![Stackuchin Alerts](stackuchin-alert.png) 
+
+
+## Notes
+
+* Using secrets (NoEcho) parameters
+
+Defining them as parameters kinda defeats their purpose of being secret.
+
+You should specify them through the `--secret` argument for simple commands, or through the `secrets` property in pipelines.
+
+* The pipeline, if "sequential", will execute the following operations in order:
+You can specify only 1, 2 or 3 types of operations mentioned above, but regardless of their order, the script will forcefully process them as:
+1) CREATE
+2) UPDATE
+3) DELETE 
+
+* The pipeline, if "parallel", will execute ALL operations at the same time.
