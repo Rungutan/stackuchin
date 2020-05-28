@@ -81,7 +81,7 @@ To see help text, you can run:
         parser.add_argument('--s3_prefix', dest="s3_prefix", required=False, default=None
                             , help='Argument used to overwrite environment variable STACKUCHIN_BUCKET_PREFIX.\n'
                                    'The bucket prefix path to be used when the S3 bucket is defined.')
-        parser.add_argument('-p', '--profile', dest='profile', default='default'
+        parser.add_argument('-p', '--profile', dest='profile', default=None
                             , help='The AWS profile you\'ll be using.\n'
                                    'If not specified, the "default" profile will be used. \n'
                                    'If no profiles are defined, then the default AWS credential mechanism starts.\n')
@@ -128,7 +128,7 @@ To see help text, you can run:
                                    'If not specified, the script will check for env var STACKUCHIN_SLACK.\n'
                                    'If neither argument nor environment variable is specified, then no notifications '
                                    'will be sent.')
-        parser.add_argument('-p', '--profile', dest='profile', default='default'
+        parser.add_argument('-p', '--profile', dest='profile', default=None
                             , help='The AWS profile you\'ll be using.\n'
                                    'If not specified, the "default" profile will be used. \n'
                                    'If no profiles are defined, then the default AWS credential mechanism starts.\n')
@@ -178,7 +178,7 @@ To see help text, you can run:
         parser.add_argument('--s3_prefix', dest="s3_prefix", required=False, default=None
                             , help='Argument used to overwrite environment variable STACKUCHIN_BUCKET_PREFIX.\n'
                                    'The bucket prefix path to be used when the S3 bucket is defined.')
-        parser.add_argument('-p', '--profile', dest='profile', default='default'
+        parser.add_argument('-p', '--profile', dest='profile', default=None
                             , help='The AWS profile you\'ll be using.\n'
                                    'If not specified, the "default" profile will be used. \n'
                                    'If no profiles are defined, then the default AWS credential mechanism starts.\n')
@@ -240,19 +240,11 @@ To see help text, you can run:
         parser.add_argument('--s3_prefix', dest="s3_prefix", required=False, default=None
                             , help='Argument used to overwrite environment variable STACKUCHIN_BUCKET_PREFIX.\n'
                                    'The bucket prefix path to be used when the S3 bucket is defined.')
-        parser.add_argument('-p', '--profile', dest='profile', default='default'
+        parser.add_argument('-p', '--profile', dest='profile', default=None
                             , help='The AWS profile you\'ll be using.\n'
                                    'If not specified, the "default" profile will be used. \n'
                                    'If no profiles are defined, then the default AWS credential mechanism starts.\n')
         args = parser.parse_args(sys.argv[2:])
-
-        if args.profile is not None:
-            try:
-                boto3.setup_default_session(profile_name=args.profile)
-            except Exception as e:
-                print(e)
-                exit(1)
-
 
         stacks = None
         try:
