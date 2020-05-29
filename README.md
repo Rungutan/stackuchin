@@ -17,14 +17,15 @@ This CLI has been designed for:
 7) it supports NoEcho parameters
 8) it supports tagging of resources at stack level
 9) it supports unattended deployment (through a CI/CD system)
+10) it supports both JSON and YAML versions of AWS CloudFormation
 
 And this is just the tip of the iceberg...
 
 ## What can this CLI NOT do?
 
-Unfortunately, it cannot understand contracted forms of verbs in AWS CloudFormation.
+Unfortunately, it cannot understand contracted forms of verbs in AWS CloudFormation when using YAML templates.
 
-In short, you'll have to rename `!If` commands to `Fn::If`.
+In short, if your AWS CF templates written in YAML use stuff like `!If`, then you have to update them to use their respective version -> `Fn::If`.
 
 ## Is it production ready?
 

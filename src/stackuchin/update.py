@@ -2,6 +2,7 @@ import boto3
 from botocore.exceptions import WaiterError
 import yaml
 from datetime import datetime
+import simplejson as json
 
 from stackuchin.utilities import alert
 from stackuchin.utilities import result
@@ -79,10 +80,14 @@ def update(profile_name, stack_file, stack_name, secret, slack_webhook_url, s3_b
     template = None
     try:
         with open(stacks[stack_name]['Template'], 'r') as template_stream:
-            template = yaml.safe_load(template_stream)
-    except yaml.YAMLError as exc:
-        print(exc)
-        exit(1)
+            template = json.load(template_stream)
+    except Exception as e:
+        try:
+            with open(stacks[stack_name]['Template'], 'r') as template_stream:
+                template = yaml.safe_load(template_stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+            exit(1)
 
     if 'Resources' not in template:
         print("The CloudFormation templates provided for this stack does not contain any Resources")

@@ -2,6 +2,8 @@ import boto3
 import yaml
 import requests
 from datetime import datetime
+import simplejson as json
+
 
 def current_user(profile_name):
     if profile_name is not None:
@@ -31,12 +33,14 @@ def get_parameters(stack_file, stack_name, secret, stack_region=None,
     template = None
     try:
         with open(stacks[stack_name]['Template'], 'r') as template_stream:
-            template = yaml.safe_load(template_stream)
-    except yaml.YAMLError as exc:
-        print(exc)
-        alert(stack_name, exc, stack_region, stack_account, action,
-              profile_name, slack_webhook_url)
-        exit(1)
+            template = json.load(template_stream)
+    except Exception as e:
+        try:
+            with open(stacks[stack_name]['Template'], 'r') as template_stream:
+                template = yaml.safe_load(template_stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+            exit(1)
 
     # Get list of required parameters for stack
     required_params = []
@@ -173,18 +177,22 @@ def upload(stack_file, stack_name, s3_bucket, s3_prefix,
         exit(1)
 
     template_string = None
+    loaded_as_json = False
     try:
         with open(stacks[stack_name]['Template'], 'r') as template_stream:
-            template_string = template_stream.read()
-    except yaml.YAMLError as exc:
-        print(exc)
-        alert(stack_name, exc, stack_region, stack_account, action,
-              profile_name, slack_webhook_url)
-        exit(1)
+            template_string = json.load(template_stream)
+            loaded_as_json = True
+    except Exception as e:
+        try:
+            with open(stacks[stack_name]['Template'], 'r') as template_stream:
+                template_string = yaml.safe_load(template_stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+            exit(1)
 
     output_object = {
         "type": "TemplateBody",
-        "value": template_string
+        "value": json.dumps(template_string) if loaded_as_json else template_string
     }
 
     template_key = None

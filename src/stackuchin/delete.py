@@ -1,6 +1,7 @@
 import boto3
 import yaml
 from datetime import datetime
+import simplejson as json
 
 from stackuchin.utilities import alert
 
@@ -77,10 +78,14 @@ def delete(profile_name, stack_file, stack_name, slack_webhook_url, from_pipelin
     template = None
     try:
         with open(stacks[stack_name]['Template'], 'r') as template_stream:
-            template = yaml.safe_load(template_stream)
-    except yaml.YAMLError as exc:
-        print(exc)
-        exit(1)
+            template = json.load(template_stream)
+    except Exception as e:
+        try:
+            with open(stacks[stack_name]['Template'], 'r') as template_stream:
+                template = yaml.safe_load(template_stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+            exit(1)
 
     if 'Resources' not in template:
         print("The CloudFormation templates provided for this stack does not contain any Resources")

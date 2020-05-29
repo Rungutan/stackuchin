@@ -135,3 +135,5 @@ src/stackuchin/cloudformation-stacks.yaml
 src/stackuchin/template.yaml
 
 src/stackuchin/pipeline.yaml
+
+src/stackuchin/template.json

@@ -3,7 +3,6 @@ from argparse import RawTextHelpFormatter
 import sys
 import os
 import yaml
-import boto3
 
 
 PACKAGE_PARENT = '..'
@@ -44,7 +43,7 @@ To see help text, you can run:
 
     # noinspection PyMethodMayBeStatic
     def version(self):
-        print("1.1.3")
+        print("1.2.0")
 
     # noinspection PyMethodMayBeStatic
     def create(self):
