@@ -56,12 +56,13 @@ def get_parameters(stack_file, stack_name, secret, stack_region=None,
     # Fill in output array with Parameters from stack file
     output_array = []
     try:
-        for key in template['Parameters']:
-            if key in stacks[stack_name]['Parameters']:
-                output_array.append({
-                    "ParameterKey": key,
-                    "ParameterValue": stacks[stack_name]['Parameters'][key]
-                })
+        if "Parameters" in template:
+            for key in template['Parameters']:
+                if key in stacks[stack_name]['Parameters']:
+                    output_array.append({
+                        "ParameterKey": key,
+                        "ParameterValue": stacks[stack_name]['Parameters'][key]
+                    })
     except Exception as exc:
         print(exc)
         alert(stack_name,
