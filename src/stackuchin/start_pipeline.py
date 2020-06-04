@@ -75,9 +75,9 @@ def start_pipeline(profile_name, stack_file, pipeline_file,
                 secrets = []
                 if "secrets" in stack:
                     for hidden in stack["secrets"]:
-                        secrets.append([
+                        secrets.append(
                             "{}={}".format(hidden["Name"], hidden["Value"])
-                        ])
+                        )
                 create(profile_name, stack_file, stack["stack_name"], secrets,
                        slack_webhook_url, s3_bucket, s3_prefix, only_errors, True)
 
@@ -87,9 +87,9 @@ def start_pipeline(profile_name, stack_file, pipeline_file,
                 secrets = []
                 if "secrets" in stack:
                     for hidden in stack["secrets"]:
-                        secrets.append([
+                        secrets.append(
                             "{}={}".format(hidden["Name"], hidden["Value"])
-                        ])
+                        )
                 update(profile_name, stack_file, stack["stack_name"], secrets,
                        slack_webhook_url, s3_bucket, s3_prefix, only_errors, True)
 
@@ -108,9 +108,9 @@ def start_pipeline(profile_name, stack_file, pipeline_file,
                 secrets = []
                 if "secrets" in stack:
                     for hidden in stack["secrets"]:
-                        secrets.append([
+                        secrets.append(
                             "{}={}".format(hidden["Name"], hidden["Value"])
-                        ])
+                        )
                 stacks.append({
                     "action": "create",
                     "profile_name": profile_name,
@@ -129,9 +129,9 @@ def start_pipeline(profile_name, stack_file, pipeline_file,
                 secrets = []
                 if "secrets" in stack:
                     for hidden in stack["secrets"]:
-                        secrets.append([
+                        secrets.append(
                             "{}={}".format(hidden["Name"], hidden["Value"])
-                        ])
+                        )
                 stacks.append({
                     "action": "update",
                     "profile_name": profile_name,
@@ -150,9 +150,9 @@ def start_pipeline(profile_name, stack_file, pipeline_file,
                 secrets = []
                 if "secrets" in stack:
                     for hidden in stack["secrets"]:
-                        secrets.append([
+                        secrets.append(
                             "{}={}".format(hidden["Name"], hidden["Value"])
-                        ])
+                        )
                 stacks.append({
                     "action": "delete",
                     "profile_name": profile_name,
@@ -174,9 +174,4 @@ def start_pipeline(profile_name, stack_file, pipeline_file,
             }
             for future in concurrent.futures.as_completed(results):
                 future.result()
-
-
-
-
-
 
