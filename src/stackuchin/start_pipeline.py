@@ -1,5 +1,6 @@
 import yaml
 import concurrent.futures
+import boto3
 
 
 from stackuchin.create import create
@@ -63,6 +64,9 @@ def start_pipeline(profile_name, stack_file, pipeline_file,
 
     if 'pipeline_type' in pipeline:
         pipeline_type = pipeline['pipeline_type']
+
+    if profile_name is not None:
+        boto3.setup_default_session(profile_name=profile_name)
 
     if pipeline_type == "sequential":
         # First create new stacks (if any)

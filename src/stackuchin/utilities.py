@@ -6,12 +6,6 @@ import simplejson as json
 
 
 def current_user(profile_name):
-    if profile_name is not None:
-        try:
-            boto3.setup_default_session(profile_name=profile_name)
-        except Exception as e:
-            print(e)
-            exit(1)
     sts = boto3.client('sts')
     return sts.get_caller_identity()['Arn']
 
@@ -249,9 +243,6 @@ def alert(stack_name, error=None, stack_region=None, stack_account=None, action=
           profile_name=None, slack_webhook_url=None):
 
     if slack_webhook_url is not None:
-        if profile_name is not None:
-            boto3.setup_default_session(profile_name=profile_name)
-
         iam_user = current_user(profile_name)
         action = str(action).upper()
 

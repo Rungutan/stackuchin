@@ -98,12 +98,14 @@ def delete(profile_name, stack_file, stack_name,
         exit(1)
 
     # Get auth
-    if profile_name is not None:
-        try:
-            boto3.setup_default_session(profile_name=profile_name)
-        except Exception as exc:
-            print(exc)
-            exit(1)
+    if not from_pipeline:
+        if profile_name is not None:
+            try:
+                boto3.setup_default_session(profile_name=profile_name)
+            except Exception as exc:
+                print(exc)
+                exit(1)
+
     # Verify integrity of stack
     stacks = None
     try:
