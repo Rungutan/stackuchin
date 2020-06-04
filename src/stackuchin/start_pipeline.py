@@ -1,6 +1,8 @@
 import yaml
 import concurrent.futures
 import boto3
+import time
+import random
 
 
 from stackuchin.create import create
@@ -12,6 +14,8 @@ warnings.filterwarnings("ignore")
 
 
 def perform_parallel_changes(stack):
+    time.sleep(random.randint(0, 30))
+
     if stack['action'] == 'create':
         return create(
             stack['profile_name'],
