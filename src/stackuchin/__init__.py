@@ -80,6 +80,10 @@ To see help text, you can run:
         parser.add_argument('--s3_prefix', dest="s3_prefix", required=False, default=None
                             , help='Argument used to overwrite environment variable STACKUCHIN_BUCKET_PREFIX.\n'
                                    'The bucket prefix path to be used when the S3 bucket is defined.')
+        parser.add_argument('--only_errors', dest="only_errors", required=False, default=False, action="store_true"
+                            , help='By default, all notifications are sent to Slack if slack_webhook is defined.\n'
+                                   'By running this command you ensure that only errors are getting pushed.\n'
+                                   'This is useful in case you don\'t want to see COMPLETE and START notifications.')
         parser.add_argument('-p', '--profile', dest='profile', default=None
                             , help='The AWS profile you\'ll be using.\n'
                                    'If not specified, the "default" profile will be used. \n'
@@ -107,7 +111,8 @@ To see help text, you can run:
             if "STACKUCHIN_BUCKET_PREFIX" in os.environ:
                 s3_prefix = os.environ.get('STACKUCHIN_BUCKET_PREFIX')
 
-        create(args.profile, args.stack_file, args.stack_name, args.secret, slack_webhook_url, s3_bucket, s3_prefix)
+        create(args.profile, args.stack_file, args.stack_name,
+               args.secret, slack_webhook_url, s3_bucket, s3_prefix, args.only_errors)
 
     # noinspection PyMethodMayBeStatic
     def delete(self):
@@ -127,6 +132,10 @@ To see help text, you can run:
                                    'If not specified, the script will check for env var STACKUCHIN_SLACK.\n'
                                    'If neither argument nor environment variable is specified, then no notifications '
                                    'will be sent.')
+        parser.add_argument('--only_errors', dest="only_errors", required=False, default=False, action="store_true"
+                            , help='By default, all notifications are sent to Slack if slack_webhook is defined.\n'
+                                   'By running this command you ensure that only errors are getting pushed.\n'
+                                   'This is useful in case you don\'t want to see COMPLETE and START notifications.')
         parser.add_argument('-p', '--profile', dest='profile', default=None
                             , help='The AWS profile you\'ll be using.\n'
                                    'If not specified, the "default" profile will be used. \n'
@@ -140,7 +149,7 @@ To see help text, you can run:
             if "STACKUCHIN_SLACK" in os.environ:
                 slack_webhook_url = os.environ.get('STACKUCHIN_SLACK')
 
-        delete(args.profile, args.stack_file, args.stack_name, slack_webhook_url)
+        delete(args.profile, args.stack_file, args.stack_name, slack_webhook_url, args.only_errors)
 
     # noinspection PyMethodMayBeStatic
     def update(self):
@@ -177,6 +186,10 @@ To see help text, you can run:
         parser.add_argument('--s3_prefix', dest="s3_prefix", required=False, default=None
                             , help='Argument used to overwrite environment variable STACKUCHIN_BUCKET_PREFIX.\n'
                                    'The bucket prefix path to be used when the S3 bucket is defined.')
+        parser.add_argument('--only_errors', dest="only_errors", required=False, default=False, action="store_true"
+                            , help='By default, all notifications are sent to Slack if slack_webhook is defined.\n'
+                                   'By running this command you ensure that only errors are getting pushed.\n'
+                                   'This is useful in case you don\'t want to see COMPLETE and START notifications.')
         parser.add_argument('-p', '--profile', dest='profile', default=None
                             , help='The AWS profile you\'ll be using.\n'
                                    'If not specified, the "default" profile will be used. \n'
@@ -205,7 +218,8 @@ To see help text, you can run:
             if "STACKUCHIN_BUCKET_PREFIX" in os.environ:
                 s3_prefix = os.environ.get('STACKUCHIN_BUCKET_PREFIX')
 
-        update(args.profile, args.stack_file, args.stack_name, args.secret, slack_webhook_url, s3_bucket, s3_prefix)
+        update(args.profile, args.stack_file, args.stack_name, args.secret,
+               slack_webhook_url, s3_bucket, s3_prefix, args.only_errors)
 
     # noinspection PyMethodMayBeStatic
     def pipeline(self):
@@ -239,6 +253,10 @@ To see help text, you can run:
         parser.add_argument('--s3_prefix', dest="s3_prefix", required=False, default=None
                             , help='Argument used to overwrite environment variable STACKUCHIN_BUCKET_PREFIX.\n'
                                    'The bucket prefix path to be used when the S3 bucket is defined.')
+        parser.add_argument('--only_errors', dest="only_errors", required=False, default=False, action="store_true"
+                            , help='By default, all notifications are sent to Slack if slack_webhook is defined.\n'
+                                   'By running this command you ensure that only errors are getting pushed.\n'
+                                   'This is useful in case you don\'t want to see COMPLETE and START notifications.')
         parser.add_argument('-p', '--profile', dest='profile', default=None
                             , help='The AWS profile you\'ll be using.\n'
                                    'If not specified, the "default" profile will be used. \n'
@@ -321,7 +339,8 @@ To see help text, you can run:
             if "STACKUCHIN_BUCKET_PREFIX" in os.environ:
                 s3_prefix = os.environ.get('STACKUCHIN_BUCKET_PREFIX')
 
-        start_pipeline(args.profile, args.stack_file, args.pipeline_file, slack_webhook_url, s3_bucket, s3_prefix)
+        start_pipeline(args.profile, args.stack_file, args.pipeline_file,
+                       slack_webhook_url, s3_bucket, s3_prefix, args.only_errors)
 
 def main():
     StackuchinCLI()

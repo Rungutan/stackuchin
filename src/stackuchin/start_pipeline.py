@@ -20,6 +20,7 @@ def perform_parallel_changes(stack):
             stack['slack_webhook_url'],
             stack['s3_bucket'],
             stack['s3_prefix'],
+            stack['only_errors'],
             True)
 
     if stack['action'] == 'update':
@@ -31,6 +32,7 @@ def perform_parallel_changes(stack):
             stack['slack_webhook_url'],
             stack['s3_bucket'],
             stack['s3_prefix'],
+            stack['only_errors'],
             True)
 
     if stack['action'] == 'delete':
@@ -39,12 +41,14 @@ def perform_parallel_changes(stack):
             stack['stack_file'],
             stack["stack_name"],
             stack['slack_webhook_url'],
+            stack['only_errors'],
             True)
 
     return True
 
 
-def start_pipeline(profile_name, stack_file, pipeline_file, slack_webhook_url, s3_bucket, s3_prefix):
+def start_pipeline(profile_name, stack_file, pipeline_file,
+                   slack_webhook_url, s3_bucket, s3_prefix, only_errors):
 
     pipeline_type = 'sequential'
 
@@ -71,7 +75,7 @@ def start_pipeline(profile_name, stack_file, pipeline_file, slack_webhook_url, s
                             "{}={}".format(hidden["Name"], hidden["Value"])
                         ])
                 create(profile_name, stack_file, stack["stack_name"], secrets,
-                       slack_webhook_url, s3_bucket, s3_prefix, True)
+                       slack_webhook_url, s3_bucket, s3_prefix, only_errors, True)
 
         # Then update existing stacks (if any)
         if "update" in pipeline:
@@ -83,12 +87,12 @@ def start_pipeline(profile_name, stack_file, pipeline_file, slack_webhook_url, s
                             "{}={}".format(hidden["Name"], hidden["Value"])
                         ])
                 update(profile_name, stack_file, stack["stack_name"], secrets,
-                       slack_webhook_url, s3_bucket, s3_prefix, True)
+                       slack_webhook_url, s3_bucket, s3_prefix, only_errors, True)
 
         # And finally delete stacks (if any)
         if "delete" in pipeline:
             for stack in pipeline["delete"]:
-                delete(profile_name, stack_file, stack["stack_name"], slack_webhook_url, True)
+                delete(profile_name, stack_file, stack["stack_name"], slack_webhook_url, only_errors, True)
 
     else:
         # Build array of executions
@@ -111,7 +115,8 @@ def start_pipeline(profile_name, stack_file, pipeline_file, slack_webhook_url, s
                     "secrets": secrets,
                     "slack_webhook_url": slack_webhook_url,
                     "s3_bucket": s3_bucket,
-                    "s3_prefix": s3_prefix
+                    "s3_prefix": s3_prefix,
+                    "only_errors": only_errors
                 })
 
         # Check if any stacks to update
@@ -131,7 +136,8 @@ def start_pipeline(profile_name, stack_file, pipeline_file, slack_webhook_url, s
                     "secrets": secrets,
                     "slack_webhook_url": slack_webhook_url,
                     "s3_bucket": s3_bucket,
-                    "s3_prefix": s3_prefix
+                    "s3_prefix": s3_prefix,
+                    "only_errors": only_errors
                 })
 
         # Check if any stacks to delete
@@ -151,7 +157,8 @@ def start_pipeline(profile_name, stack_file, pipeline_file, slack_webhook_url, s
                     "secrets": secrets,
                     "slack_webhook_url": slack_webhook_url,
                     "s3_bucket": s3_bucket,
-                    "s3_prefix": s3_prefix
+                    "s3_prefix": s3_prefix,
+                    "only_errors": only_errors
                 })
 
         # Execute parallel deployments

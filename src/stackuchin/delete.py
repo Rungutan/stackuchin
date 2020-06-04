@@ -10,7 +10,8 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-def delete(profile_name, stack_file, stack_name, slack_webhook_url, from_pipeline=False):
+def delete(profile_name, stack_file, stack_name,
+           slack_webhook_url, only_errors, from_pipeline=False):
     aws_region = None
     aws_account = None
     stacks = None
@@ -148,6 +149,9 @@ def delete(profile_name, stack_file, stack_name, slack_webhook_url, from_pipelin
 
     # Delete the stack
     waiter = None
+    if not only_errors:
+        print("DELETE_STARTED for stack {}".format(stack_name))
+        alert(stack_name, None, aws_region, aws_account, "DELETE_STARTED", profile_name, slack_webhook_url)
     try:
         cf_client.delete_stack(StackName=stack_name, ClientRequestToken=client_token)
     except Exception as exc:
@@ -185,7 +189,8 @@ def delete(profile_name, stack_file, stack_name, slack_webhook_url, from_pipelin
               aws_region, aws_account, action, profile_name, slack_webhook_url)
         exit(1)
 
-    print("DELETE_COMPLETE for stack {}".format(stack_name))
-    alert(stack_name, None, aws_region, aws_account, "DELETE_COMPLETE", profile_name, slack_webhook_url)
+    if not only_errors:
+        print("DELETE_COMPLETE for stack {}".format(stack_name))
+        alert(stack_name, None, aws_region, aws_account, "DELETE_COMPLETE", profile_name, slack_webhook_url)
 
     return True

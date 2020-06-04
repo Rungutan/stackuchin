@@ -12,7 +12,8 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-def create(profile_name, stack_file, stack_name, secret, slack_webhook_url, s3_bucket, s3_prefix, from_pipeline=False):
+def create(profile_name, stack_file, stack_name, secret, slack_webhook_url,
+           s3_bucket, s3_prefix, only_errors, from_pipeline=False):
     aws_region = None
     aws_account = None
     stacks = None
@@ -164,6 +165,9 @@ def create(profile_name, stack_file, stack_name, secret, slack_webhook_url, s3_b
         exit(1)
 
     # Create the stack
+    if not only_errors:
+        print("CREATE_STARTED for stack {}".format(stack_name))
+        alert(stack_name, None, aws_region, aws_account, "CREATE_STARTED", profile_name, slack_webhook_url)
     waiter = None
     try:
         if stack_template_url['type'] == 'TemplateURL':
@@ -223,7 +227,8 @@ def create(profile_name, stack_file, stack_name, secret, slack_webhook_url, s3_b
               aws_region, aws_account, action, profile_name, slack_webhook_url)
         exit(1)
 
-    print("CREATE_COMPLETE for stack {}".format(stack_name))
-    alert(stack_name, None, aws_region, aws_account, "CREATE_COMPLETE", profile_name, slack_webhook_url)
+    if not only_errors:
+        print("CREATE_COMPLETE for stack {}".format(stack_name))
+        alert(stack_name, None, aws_region, aws_account, "CREATE_COMPLETE", profile_name, slack_webhook_url)
 
     return True

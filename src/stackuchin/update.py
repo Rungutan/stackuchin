@@ -11,7 +11,8 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-def update(profile_name, stack_file, stack_name, secret, slack_webhook_url, s3_bucket, s3_prefix, from_pipeline=False):
+def update(profile_name, stack_file, stack_name, secret, slack_webhook_url,
+           s3_bucket, s3_prefix, only_errors, from_pipeline=False):
     aws_region = None
     aws_account = None
     stacks = None
@@ -191,6 +192,9 @@ def update(profile_name, stack_file, stack_name, secret, slack_webhook_url, s3_b
         exit(1)
 
     # Waiting for stack to finish updating
+    if not only_errors:
+        print("UPDATE_STARTED for stack {}".format(stack_name))
+        alert(stack_name, None, aws_region, aws_account, "UPDATE_STARTED", profile_name, slack_webhook_url)
     waiter = None
     try:
         waiter = cf_client.get_waiter('stack_update_complete')
@@ -219,7 +223,8 @@ def update(profile_name, stack_file, stack_name, secret, slack_webhook_url, s3_b
               aws_region, aws_account, action, profile_name, slack_webhook_url)
         exit(1)
 
-    print("UPDATE_COMPLETE for stack {}".format(stack_name))
-    alert(stack_name, None, aws_region, aws_account, "UPDATE_COMPLETE", profile_name, slack_webhook_url)
+    if not only_errors:
+        print("UPDATE_COMPLETE for stack {}".format(stack_name))
+        alert(stack_name, None, aws_region, aws_account, "UPDATE_COMPLETE", profile_name, slack_webhook_url)
 
     return True
