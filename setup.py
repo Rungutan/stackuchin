@@ -4,7 +4,7 @@ from os import path
 
 here = path.abspath(path.dirname(__file__))
 
-current_version = str('1.5.1')
+current_version = str('1.5.2')
 
 # Get the long description from the README file
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
@@ -71,7 +71,7 @@ setup(
 
     python_requires='>=3.5, <4',
 
-    install_requires=['simplejson', 'boto3', 'botocore'],
+    install_requires=['simplejson', 'boto3', 'botocore', 'pyyaml', 'requests'],
 
     extras_require={
         'test': ['coverage'],

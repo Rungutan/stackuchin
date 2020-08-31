@@ -1,6 +1,6 @@
 FROM python:3.7-alpine
 
-RUN  pip install stackuchin==1.5.1
+RUN  pip install stackuchin==1.5.2
 
 VOLUME /project
 
