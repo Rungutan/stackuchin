@@ -175,6 +175,8 @@ def update(profile_name, stack_file, stack_name, secret, slack_webhook_url,
     except WaiterError as exc:
         if 'Submit different information' in exc.last_response['StatusReason']:
             print("Nothing to update for stack {}".format(stack_name))
+            if from_pipeline:
+                return True
             exit(0)
         else:
             print(exc)
