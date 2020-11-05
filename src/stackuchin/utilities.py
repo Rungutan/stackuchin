@@ -172,11 +172,9 @@ def upload(stack_file, stack_name, s3_bucket, s3_prefix,
         exit(1)
 
     template_string = None
-    loaded_as_json = False
     try:
         with open(stacks[stack_name]['Template'], 'r') as template_stream:
             template_string = json.load(template_stream)
-            loaded_as_json = True
     except Exception as e:
         try:
             with open(stacks[stack_name]['Template'], 'r') as template_stream:
@@ -187,7 +185,7 @@ def upload(stack_file, stack_name, s3_bucket, s3_prefix,
 
     output_object = {
         "type": "TemplateBody",
-        "value": json.dumps(template_string) if loaded_as_json else template_string
+        "value": json.dumps(template_string)
     }
 
     template_key = None
