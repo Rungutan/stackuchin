@@ -185,7 +185,7 @@ def upload(stack_file, stack_name, s3_bucket, s3_prefix,
 
     output_object = {
         "type": "TemplateBody",
-        "value": json.dumps(template_string)
+        "value": json.dumps(template_string, default=str)
     }
 
     template_key = None

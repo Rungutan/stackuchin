@@ -149,7 +149,7 @@ def update(profile_name, stack_file, stack_name, secret, slack_webhook_url,
         else:
             template_body = stack_template_url['value']
             if type(template_body) != str:
-                template_body = json.dumps(template_body)
+                template_body = json.dumps(template_body, default=str)
             changeset = cf_client.create_change_set(StackName=stack_name,
                                                     TemplateBody=template_body,
                                                     Parameters=stack_parameters,
