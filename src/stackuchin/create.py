@@ -143,7 +143,7 @@ def create(profile_name, stack_file, stack_name, secret, slack_webhook_url,
                 stack_check_status = stack_check["Stacks"][0]["StackStatus"]
                 if stack_check_status == "ROLLBACK_COMPLETE":
                     # Delete the stack
-                    delete(profile_name, stack_file, stack_name, slack_webhook_url)
+                    delete(profile_name, stack_file, stack_name, slack_webhook_url, only_errors, from_pipeline)
 
             except Exception as exc:
                 print(exc)
