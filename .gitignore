@@ -137,3 +137,9 @@ src/stackuchin/template.yaml
 src/stackuchin/pipeline.yaml
 
 src/stackuchin/template.json
+
+src/stackuchin/cloudformation-template.yaml
+
+src/stackuchin/input.yaml
+
+src/stackuchin/test.py

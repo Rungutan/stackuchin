@@ -43,7 +43,7 @@ To see help text, you can run:
 
     # noinspection PyMethodMayBeStatic
     def version(self):
-        print("1.5.6")
+        print("1.6.0")
 
     # noinspection PyMethodMayBeStatic
     def create(self):

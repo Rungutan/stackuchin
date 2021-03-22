@@ -1,13 +1,7 @@
-import boto3
 import yaml
 import requests
 from datetime import datetime
 import simplejson as json
-
-
-def current_user(profile_name):
-    sts = boto3.client('sts')
-    return sts.get_caller_identity()['Arn']
 
 
 def get_parameters(stack_file, stack_name, secret, stack_region=None,
@@ -159,7 +153,7 @@ def get_tags(stack_file, stack_name, stack_region=None,
 
 def upload(stack_file, stack_name, s3_bucket, s3_prefix,
            stack_region=None, stack_account=None, action=None,
-           profile_name=None, slack_webhook_url=None):
+           profile_name=None, slack_webhook_url=None, s3_session=None):
 
     stacks = None
     try:
@@ -198,8 +192,7 @@ def upload(stack_file, stack_name, s3_bucket, s3_prefix,
             template_key = '{}/{}/{}/{}'.format(s3_prefix, stack_name, timestamp_key,
                                                 stacks[stack_name]['Template'])
         try:
-            s3 = boto3.resource('s3', region_name=stack_region)
-            s3.Bucket(s3_bucket).upload_file(
+            s3_session.Bucket(s3_bucket).upload_file(
                 stacks[stack_name]['Template'],
                 template_key
             )
@@ -223,7 +216,7 @@ def upload(stack_file, stack_name, s3_bucket, s3_prefix,
 
 def result(stack_file, stack_name, secret, s3_bucket, s3_prefix,
            stack_region=None, stack_account=None, action=None,
-           profile_name=None, slack_webhook_url=None):
+           profile_name=None, slack_webhook_url=None, s3_session=None):
 
     params = get_parameters(stack_file, stack_name, secret, stack_region,
                             stack_account, action, profile_name, slack_webhook_url)
@@ -232,16 +225,15 @@ def result(stack_file, stack_name, secret, s3_bucket, s3_prefix,
                     stack_account, action, profile_name, slack_webhook_url)
 
     template_url = upload(stack_file, stack_name, s3_bucket, s3_prefix, stack_region,
-                    stack_account, action, profile_name, slack_webhook_url)
+                    stack_account, action, profile_name, slack_webhook_url, s3_session)
 
     return params, tags, template_url
 
 
 def alert(stack_name, error=None, stack_region=None, stack_account=None, action=None,
-          profile_name=None, slack_webhook_url=None):
+          profile_name=None, slack_webhook_url=None, iam_user="IAM User"):
 
     if slack_webhook_url is not None:
-        iam_user = current_user(profile_name)
         action = str(action).upper()
 
         if stack_region is not None and stack_account is not None:

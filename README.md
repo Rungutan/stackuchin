@@ -147,6 +147,19 @@ another-stack-name:
     Team: DevOps
     MaintainerEmail: support@rungutan.com
     MaintainerTeam: Rungutan
+    
+stack-different-account-assume-role:
+  Account: 456445654456
+  Region: us-east-1
+  Template: some-folder/cloudformation-some-other-template.yaml
+  AssumedRoleArn: arn:aws:iam::456445654456:role/SomeRoleThatCanBeAssumed
+  # Stack without readable parameters.
+  Parameters: {}
+  Tags:
+    Environment: UTILITIES
+    Team: DevOps
+    MaintainerEmail: support@rungutan.com
+    MaintainerTeam: Rungutan
 ```
 
 ## Running it as a pipeline

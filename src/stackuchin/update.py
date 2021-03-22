@@ -108,14 +108,20 @@ def update(profile_name, stack_file, stack_name, secret, slack_webhook_url,
                 print(exc)
                 exit(1)
 
+    sts = boto3.client('sts')
+    iam_user = sts.get_caller_identity()['Arn']
+
     # Verify integrity of stack
     stacks = None
+    aws_role_arn = None
     try:
         with open(stack_file, 'r') as stack_stream:
             stacks = yaml.safe_load(stack_stream)
             aws_region = stacks[stack_name]['Region']
             aws_account = stacks[stack_name]['Account']
             stack_template = stacks[stack_name]['Template']
+            if 'AssumedRoleArn' in stacks[stack_name]:
+                aws_role_arn = stacks[stack_name]['AssumedRoleArn']
     except yaml.YAMLError as exc:
         print(exc)
         alert(stack_name,
@@ -124,14 +130,52 @@ def update(profile_name, stack_file, stack_name, secret, slack_webhook_url,
               aws_region, aws_account, action, profile_name, slack_webhook_url)
         exit(1)
 
+    # Set role
+    role_session = None
+    if aws_role_arn is not None:
+        try:
+            if profile_name is not None:
+                boto3.setup_default_session(profile_name=profile_name)
+
+            # Get current timestamp
+            current_date = datetime.utcnow().isoformat()
+            current_date = current_date.replace(':', '-').replace('.', '-')
+
+            # Assume role
+            sts_client = boto3.client('sts')
+            assumed_role_object = sts_client.assume_role(
+                RoleArn=aws_role_arn,
+                RoleSessionName="AssumeRoleSession-{}".format(current_date)
+            )
+            credentials = assumed_role_object['Credentials']
+            role_session = boto3.Session(
+                aws_access_key_id=credentials['AccessKeyId'],
+                aws_secret_access_key=credentials['SecretAccessKey'],
+                aws_session_token=credentials['SessionToken']
+            )
+            iam_user = aws_role_arn
+        except Exception as exc:
+            print(exc)
+            alert(stack_name,
+                  "Unable to assume role {} for stack {}. Exception = {}".format(
+                      aws_role_arn, stack_name, exc),
+                  aws_region, aws_account, action, profile_name, slack_webhook_url)
+            exit(1)
+
     # Connect to AWS CloudFormation
-    cf_client = boto3.client('cloudformation', region_name=aws_region)
+    cf_client = boto3.client('cloudformation', region_name=aws_region) if role_session is None else \
+        role_session.client('cloudformation', region_name=aws_region)
+
+    # Create AWS S3 Resource
+    s3_session = boto3.resource('s3', region_name=aws_region) if role_session is None else \
+        role_session.resource('s3', region_name=aws_region)
 
     # Get parameter and tags from stack
     stack_parameters, stack_tags, stack_template_url = result(stack_file, stack_name, secret,
                                                               s3_bucket, s3_prefix,
                                                               aws_region, aws_account,
-                                                              action, profile_name, slack_webhook_url)
+                                                              action, profile_name, slack_webhook_url,
+                                                              s3_session)
 
     # Create change set
     try:
@@ -164,7 +208,7 @@ def update(profile_name, stack_file, stack_name, secret, slack_webhook_url,
         print(exc)
         alert(stack_name,
               "Unable to create change set. Exception = {}".format(exc),
-              aws_region, aws_account, action, profile_name, slack_webhook_url)
+              aws_region, aws_account, action, profile_name, slack_webhook_url, iam_user)
         exit(1)
 
     # Waiting for the change set to finish creating
@@ -182,7 +226,7 @@ def update(profile_name, stack_file, stack_name, secret, slack_webhook_url,
             print(exc)
             alert(stack_name,
                   "Unable to create change set. Exception = {}".format(exc),
-                  aws_region, aws_account, action, profile_name, slack_webhook_url)
+                  aws_region, aws_account, action, profile_name, slack_webhook_url, iam_user)
             exit(1)
 
     # Executing change set
@@ -192,13 +236,13 @@ def update(profile_name, stack_file, stack_name, secret, slack_webhook_url,
         print(exc)
         alert(stack_name,
               "Unable to start stack creation process. Exception = {}".format(exc),
-              aws_region, aws_account, action, profile_name, slack_webhook_url)
+              aws_region, aws_account, action, profile_name, slack_webhook_url, iam_user)
         exit(1)
 
     # Waiting for stack to finish updating
     if not only_errors:
         print("UPDATE_STARTED for stack {}".format(stack_name))
-        alert(stack_name, None, aws_region, aws_account, "UPDATE_STARTED", profile_name, slack_webhook_url)
+        alert(stack_name, None, aws_region, aws_account, "UPDATE_STARTED", profile_name, slack_webhook_url, iam_user)
     waiter = None
     try:
         waiter = cf_client.get_waiter('stack_update_complete')
@@ -224,11 +268,11 @@ def update(profile_name, stack_file, stack_name, secret, slack_webhook_url,
                   "UPDATE_FAILED",
                   "\n".join(failure_reasons)
               ),
-              aws_region, aws_account, action, profile_name, slack_webhook_url)
+              aws_region, aws_account, action, profile_name, slack_webhook_url, iam_user)
         exit(1)
 
     if not only_errors:
         print("UPDATE_COMPLETE for stack {}".format(stack_name))
-        alert(stack_name, None, aws_region, aws_account, "UPDATE_COMPLETE", profile_name, slack_webhook_url)
+        alert(stack_name, None, aws_region, aws_account, "UPDATE_COMPLETE", profile_name, slack_webhook_url, iam_user)
 
     return True
